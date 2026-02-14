@@ -1,1218 +1,1690 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designed by HMD - BAC 2026 النظام المتكامل</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>HMD - BEM 2026 النظام المتكامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
-        body { 
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        input::-webkit-outer-spin-button, 
-        input::-webkit-inner-spin-button { 
-            -webkit-appearance: none; 
+        * { 
             margin: 0; 
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
         }
         
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: var(--gray-900);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 0;
+            margin: 0;
         }
         
-        .animate-pulse-glow {
-            animation: pulse-glow 3s ease-in-out infinite;
+        body.dark-mode {
+            background: linear-gradient(135deg, #000000 0%, #0f172a 100%);
+            color: #f8fafc;
         }
         
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        body.dark-mode .panel,
+        body.dark-mode .login-container,
+        body.dark-mode .admin-panel {
+            background: rgba(30, 41, 59, 0.98);
+            color: #f8fafc;
         }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #ec4899, #a855f7, #6366f1);
+        body.dark-mode .tab,
+        body.dark-mode select,
+        body.dark-mode input[type="number"],
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input[type="password"] {
+            background: #334155;
+            border-color: #475569;
+            color: #f8fafc;
+        }
+        
+        body.dark-mode tbody tr:hover {
+            background: #334155;
+        }
+
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            padding: 16px;
+        }
+
+        .login-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 6px;
         }
 
-        .result-animation {
-            animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: 0.85rem;
         }
 
-        @keyframes scaleIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .login-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        body.dark-mode .login-tabs {
+            background: #334155;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .tab-btn.active {
+            background: #475569;
+            color: #818cf8;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+        }
+
+        body.dark-mode .form-label {
+            color: #cbd5e1;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+            margin-bottom: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .user-info {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 14px;
+            border-radius: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            font-size: 0.85rem;
+            margin: 12px;
+            overflow: hidden;
+        }
+
+        .user-info-wrapper {
+            width: 100%;
+            display: none;
+        }
+
+        .user-info-wrapper.show {
+            display: block;
+        }
+
+        body.dark-mode .user-info {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .user-info.show {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .logout-btn,
+        .admin-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .admin-btn {
+            background: var(--accent);
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .admin-btn:hover {
+            background: #0891b2;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(236, 72, 153, 0.9));
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 16px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .title {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 12px;
+            background: var(--gray-50);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body.dark-mode .tabs {
+            background: #0f172a;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        body.dark-mode .tab {
+            background: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 12px;
+        }
+
+        .panel {
+            display: none;
+            background: white;
+            padding: 24px 16px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .panel-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .panel-subtitle {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .panel-subtitle {
+            color: #94a3b8;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-row.cols-2 { grid-template-columns: 1fr; }
+        .form-row.cols-3 { grid-template-columns: 1fr; }
+        .form-row.cols-4 { grid-template-columns: 1fr; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+        }
+
+        body.dark-mode label {
+            color: #cbd5e1;
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            font-size: 0.75rem;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        th, td {
+            padding: 8px 4px;
+            text-align: center;
+        }
+
+        th {
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+
+        tbody tr {
+            background: white;
+            transition: background 0.3s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--gray-50);
+        }
+
+        tbody tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        body.dark-mode tbody tr {
+            background: #1e293b;
+        }
+
+        body.dark-mode tbody tr:nth-child(even) {
+            background: #0f172a;
+        }
+
+        tbody input {
+            padding: 5px 6px;
+            font-size: 0.75rem;
+            min-width: 45px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--accent), #0891b2);
+            color: white;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .result-box {
+            display: none;
+            text-align: center;
+            padding: 28px 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .result-box.show {
+            display: block;
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .result-box.excellent {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .result-box.good {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+        }
+
+        .result-box.average {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .result-box.weak {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .result-message {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+        }
+
+        body.dark-mode .stat-card {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        body.dark-mode .stat-label {
+            color: #cbd5e1;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-200%);
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.4);
+            font-weight: 700;
+            z-index: 10000;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 0.9rem;
+            max-width: calc(100vw - 32px);
+            text-align: center;
+        }
+
+        .success-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .admin-panel {
+            display: none !important;
+            background: white;
+            padding: 24px 16px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .admin-panel.show {
+            display: block !important;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .students-table {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .guest-disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        .guest-badge {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 430px) {
+            .title { font-size: 1.6rem; }
+            .subtitle { font-size: 0.9rem; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 4px; }
+        }
+
+        @media (max-width: 393px) {
+            .title { font-size: 1.5rem; }
+            .panel { padding: 20px 12px; }
+            .btn { min-width: 120px; padding: 10px 16px; }
+        }
+
+        @media (max-width: 375px) {
+            .title { font-size: 1.4rem; }
+            .subtitle { font-size: 0.85rem; }
+            .logo { width: 50px; height: 50px; font-size: 1.75rem; }
+            .login-container { padding: 24px 16px; }
+            .login-logo { width: 50px; height: 50px; font-size: 1.75rem; }
+            .login-title { font-size: 1.3rem; }
+            .panel-icon { font-size: 2.5rem; }
+            .panel-title { font-size: 1.3rem; }
+            table { font-size: 0.65rem; }
+            th, td { padding: 6px 2px; }
+            tbody input { padding: 4px 4px; font-size: 0.7rem; min-width: 40px; }
+            .btn { min-width: 110px; padding: 9px 14px; font-size: 0.8rem; }
+            .user-info { font-size: 0.75rem; padding: 6px 10px; }
+            .user-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+            .logout-btn, .admin-btn { padding: 5px 10px; font-size: 0.7rem; }
+        }
+
+        @media (min-width: 768px) {
+            .title { font-size: 2rem; }
+            .panel { padding: 32px 24px; }
+            .form-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .form-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+            .form-row.cols-4 { grid-template-columns: repeat(2, 1fr); }
+            table { font-size: 0.9rem; }
+            th, td { padding: 12px 8px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .tabs { flex-wrap: wrap; }
+            .btn-group { flex-wrap: wrap; }
+            .btn { flex: 0 1 auto; }
+        }
+
+        @media (min-width: 1024px) {
+            .title { font-size: 2.5rem; }
+            .subtitle { font-size: 1.1rem; }
+            .panel { padding: 40px; }
+            .form-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .form-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+            .form-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+            table { font-size: 1rem; }
+            th, td { padding: 14px 12px; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .login-container { padding: 48px 40px; }
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">🎓</div>
+                <h2 class="login-title">HMD - BEM 2026</h2>
+                <p class="login-subtitle">نظام حساب المعدلات المتكامل</p>
+            </div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+            <div class="login-tabs">
+                <button class="tab-btn active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+                <button class="tab-btn" onclick="switchAuthTab('register')">إنشاء حساب</button>
+            </div>
 
-        // Appwrite Configuration
-        const { Client, Account, Databases, ID, Query } = window.Appwrite;
-        const client = new Client()
-            .setEndpoint('https://fra.cloud.appwrite.io/v1')
-            .setProject('6988df30002f5dcb4f7d');
+            <div id="loginForm" class="tab-content active">
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <div class="error-message" id="loginError"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" id="loginEmail" required placeholder="example@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-input" id="loginPassword" required placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: 16px;">
+                    <button type="button" class="login-btn" onclick="continueAsGuest()" style="background: var(--gray-600);">
+                        <i class="fas fa-user"></i> المتابعة كضيف
+                    </button>
+                </div>
+            </div>
+
+            <div id="registerForm" class="tab-content">
+                <form class="login-form" onsubmit="handleRegister(event)">
+                    <div class="error-message" id="registerError"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-input" id="registerName" required placeholder="أدخل اسمك الكامل">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" id="registerEmail" required placeholder="example@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-input" id="registerPassword" required placeholder="••••••••" minlength="8">
+                    </div>
+
+                    <button type="submit" class="login-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> إنشاء حساب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMsg"></div>
+
+    <div class="user-info-wrapper" id="userInfoWrapper">
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <span id="userName">مستخدم</span>
+            <button class="admin-btn" id="adminPanelBtn" onclick="toggleAdminPanel()" style="display: none;">
+                <i class="fas fa-user-shield"></i> لوحة التحكم
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> خروج
+            </button>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🎓</div>
+            <h1 class="title">HMD - BEM 2026</h1>
+            <p class="subtitle">نظام حساب المعدلات المتقدم</p>
+        </div>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleDarkMode()">
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">
+            <i class="fas fa-calculator"></i> حساب المعدل
+        </div>
+        <div class="tab" onclick="switchTab(1)">
+            <i class="fas fa-calendar-alt"></i> المعدل السنوي
+        </div>
+        <div class="tab" onclick="switchTab(2)">
+            <i class="fas fa-bullseye"></i> العلامة المطلوبة
+        </div>
+        <div class="tab" onclick="switchTab(3)">
+            <i class="fas fa-graduation-cap"></i> معدل BEM
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-header">
+                <h2 class="admin-title">
+                    <i class="fas fa-user-shield"></i> لوحة التحكم
+                </h2>
+                <p class="panel-subtitle">إدارة النظام</p>
+            </div>
+
+            <div class="students-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>البريد</th>
+                            <th>كلمة المرور</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="5">جاري تحميل البيانات...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="loadAllStudents()">
+                    <i class="fas fa-sync"></i> تحديث
+                </button>
+                <button class="btn btn-secondary" onclick="exportToCSV()">
+                    <i class="fas fa-download"></i> تصدير
+                </button>
+            </div>
+        </div>
+
+        <div class="panel active" id="panel-0">
+            <div class="panel-header">
+                <div class="panel-icon">📊</div>
+                <h2 class="panel-title">حساب معدل الفصل</h2>
+                <p class="panel-subtitle">احسب معدلك الفصلي بدقة عالية</p>
+            </div>
+
+            <div class="form-row cols-2">
+                <div>
+                    <label>اختر السنة الدراسية:</label>
+                    <select id="year-sel" onchange="loadStreams()">
+                        <option value="1">السنة الأولى متوسط</option>
+                        <option value="2">السنة الثانية متوسط</option>
+                        <option value="3">السنة الثالثة متوسط</option>
+                        <option value="4">السنة الرابعة متوسط</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="tam-chk" onchange="loadGPATable()">
+                <label for="tam-chk">أدرس الأمازيغية</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="art-chk" onchange="loadGPATable()">
+                <label for="art-chk">أدرس التربية الفنية</label>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>تقويم</th>
+                            <th>فرض</th>
+                            <th>اختبار</th>
+                            <th>معامل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gpa-body"></tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="calculateGPA()">
+                    <i class="fas fa-calculator"></i> احسب
+                </button>
+                <button class="btn btn-success" onclick="saveDataToCloud()">
+                    <i class="fas fa-cloud-upload-alt"></i> حفظ
+                </button>
+                <button class="btn btn-secondary" onclick="loadDataFromCloud()">
+                    <i class="fas fa-cloud-download-alt"></i> استرجاع
+                </button>
+                <button class="btn btn-secondary" onclick="captureResult()">
+                    <i class="fas fa-camera"></i> صورة
+                </button>
+            </div>
+
+            <div id="guestNotice" style="display: none; background: linear-gradient(135deg, #64748b, #475569); color: white; padding: 12px 16px; border-radius: 12px; text-align: center; margin: 16px 0; font-size: 0.85rem;">
+                <i class="fas fa-info-circle"></i> أنت في وضع الضيف - سجل الدخول للحصول على جميع الميزات (حفظ، استرجاع، صور)
+            </div>
+
+            <div class="result-box" id="final-res">
+                <span class="result-icon">📊</span>
+                <div class="result-text">المعدل النهائي: 0.00</div>
+                <div class="result-message">أدخل العلامات وانقر على احسب المعدل</div>
+            </div>
+        </div>
+
+        <div class="panel" id="panel-1">
+            <div class="panel-header">
+                <div class="panel-icon">📅</div>
+                <h2 class="panel-title">حساب المعدل السنوي</h2>
+                <p class="panel-subtitle">احسب معدلك السنوي من معدلات الفصول الثلاثة</p>
+            </div>
+
+            <div class="form-row cols-3">
+                <div>
+                    <label>معدل الفصل الأول:</label>
+                    <input type="number" id="t1-avg" min="0" max="20" step="0.01" placeholder="0.00">
+                </div>
+                <div>
+                    <label>معدل الفصل الثاني:</label>
+                    <input type="number" id="t2-avg" min="0" max="20" step="0.01" placeholder="0.00">
+                </div>
+                <div>
+                    <label>معدل الفصل الثالث:</label>
+                    <input type="number" id="t3-avg" min="0" max="20" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="calcYearly()">
+                    <i class="fas fa-calculator"></i> احسب المعدل السنوي
+                </button>
+            </div>
+
+            <div class="result-box" id="yearly-result">
+                <span class="result-icon">📊</span>
+                <div class="result-text">المعدل السنوي: 0.00</div>
+                <div class="result-message">أدخل معدلات الفصول الثلاثة</div>
+            </div>
+        </div>
+
+        <div class="panel" id="panel-2">
+            <div class="panel-header">
+                <div class="panel-icon">🎯</div>
+                <h2 class="panel-title">حساب العلامة المطلوبة</h2>
+                <p class="panel-subtitle">اعرف العلامة التي تحتاجها في الاختبار</p>
+            </div>
+
+            <div class="form-row cols-4">
+                <div>
+                    <label>المعدل المطلوب:</label>
+                    <input type="number" id="target-avg" min="0" max="20" step="0.01" placeholder="0.00">
+                </div>
+                <div>
+                    <label>علامة التقويم:</label>
+                    <input type="number" id="eval-mark" min="0" max="20" step="0.25" placeholder="0.00">
+                </div>
+                <div>
+                    <label>علامة الفرض:</label>
+                    <input type="number" id="test-mark" min="0" max="20" step="0.25" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="calcNeeded()">
+                    <i class="fas fa-bullseye"></i> احسب العلامة المطلوبة
+                </button>
+            </div>
+
+            <div class="result-box" id="needed-result">
+                <span class="result-icon">🎯</span>
+                <div class="result-text">العلامة المطلوبة: 0.00</div>
+                <div class="result-message">أدخل البيانات المطلوبة</div>
+            </div>
+        </div>
+
+        <div class="panel" id="panel-3">
+            <div class="panel-header">
+                <div class="panel-icon">🎓</div>
+                <h2 class="panel-title">حساب معدل شهادة التعليم المتوسط</h2>
+                <p class="panel-subtitle">احسب معدلك في امتحان BEM</p>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="tam-bem" onchange="loadBemTable()">
+                <label for="tam-bem">أدرس الأمازيغية</label>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المادة</th>
+                            <th>العلامة</th>
+                            <th>المعامل</th>
+                            <th>المجموع</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bem-body"></tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="calcBem()">
+                    <i class="fas fa-calculator"></i> احسب معدل BEM
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">مجموع النقاط</div>
+                    <div class="stat-value" id="res-pts">0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">مجموع المعاملات</div>
+                    <div class="stat-value" id="res-coef">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">المعدل النهائي</div>
+                    <div class="stat-value" id="res-avg">0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { Client, Account, Databases, ID, Query } = Appwrite;
+        const client = new Client().setEndpoint('https://fra.cloud.appwrite.io/v1').setProject('6988df30002f5dcb4f7d');
         const account = new Account(client);
         const databases = new Databases(client);
         const DATABASE_ID = '6988df7f0000d935ff6b';
-        const STUDENTS_COLLECTION_ID = 'students';
-        const GRADES_COLLECTION_ID = 'grades';
+        const STUDENTS_COLLECTION_ID = 'students_bem';
+        const GRADES_COLLECTION_ID = 'grades_bem';
         const ADMIN_EMAIL = atob('YWRtaW5AaG1kLmNvbQ==');
+        let currentUser = null;
+        let isAdmin = false;
+        let isGuest = false;
 
-        // Lucide Icon Component
-        const LucideIcon = ({ name, className }) => {
-            useEffect(() => { window.lucide.createIcons(); }, [name]);
-            return <i data-lucide={name} className={className}></i>;
+        const db = {
+            "1": [["عربية",2],["رياضيات",2],["فرنسية",1],["علوم فيزيائية",2],["اسلامية",1],["اجتماعيات",2],["مدنية",1],["انجليزية",1],["رياضة",1],["اعلام آلي",1]],
+            "2": [["عربية",3],["رياضيات",3],["فرنسية",2],["علوم فيزيائية",2],["اسلامية",1],["اجتماعيات",2],["مدنية",1],["انجليزية",2],["رياضة",1],["اعلام آلي",1]],
+            "3": [["عربية",3],["رياضيات",3],["فرنسية",2],["علوم فيزيائية",2],["اسلامية",1],["اجتماعيات",2],["مدنية",1],["انجليزية",2],["رياضة",1],["اعلام آلي",1]],
+            "4": [["عربية",5],["رياضيات",4],["فرنسية",3],["علوم فيزيائية",2],["اسلامية",2],["اجتماعيات",3],["مدنية",1],["انجليزية",2],["رياضة",1],["اعلام آلي",1]]
         };
 
-        const GradeCalculator = () => {
-            const [view, setView] = useState('login');
-            const [authMode, setAuthMode] = useState('login');
-            const [currentUser, setCurrentUser] = useState(null);
-            const [isGuest, setIsGuest] = useState(false);
-            const [isAdmin, setIsAdmin] = useState(false);
-            const [showAdminPanel, setShowAdminPanel] = useState(false);
+        const bemSubjects = [["عربية",5],["رياضيات",4],["فرنسية",3],["علوم فيزيائية",2],["اسلامية",2],["اجتماعيات",3],["مدنية",1],["انجليزية",2]];
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.querySelectorAll('.tab-btn')[0];
+            const registerTab = document.querySelectorAll('.tab-btn')[1];
+            if (tab === 'login') {
+                loginForm.classList.add('active'); registerForm.classList.remove('active');
+                loginTab.classList.add('active'); registerTab.classList.remove('active');
+            } else {
+                loginForm.classList.remove('active'); registerForm.classList.add('active');
+                loginTab.classList.remove('active'); registerTab.classList.add('active');
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorEl = document.getElementById('loginError');
+            try {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
+                errorEl.classList.remove('show');
+                await account.createEmailPasswordSession(email, password);
+                currentUser = await account.get();
+                isAdmin = (currentUser.email === ADMIN_EMAIL);
+                isGuest = false;
+                hideLoginPanel();
+                await loadUserData();
+                showSuccessMessage('🎉 تم تسجيل الدخول بنجاح!');
+            } catch (error) {
+                errorEl.textContent = '⚠️ البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                errorEl.classList.add('show');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+            }
+        }
+
+        function continueAsGuest() {
+            isGuest = true;
+            currentUser = {
+                $id: 'guest',
+                name: 'ضيف',
+                email: 'guest@local'
+            };
+            hideLoginPanel();
+            document.getElementById('userName').innerHTML = '<span class="guest-badge">ضيف</span>ضيف';
+            document.getElementById('userAvatar').textContent = '👤';
+            document.getElementById('userAvatar').style.background = 'linear-gradient(135deg, #64748b, #475569)';
             
-            const [timer, setTimer] = useState({ days: 0, hours: 0, minutes: 0 });
-            const [level, setLevel] = useState('1');
-            const [stream, setStream] = useState('');
-            const [tamazight, setTamazight] = useState(false);
-            const [art, setArt] = useState(false);
-            const [gpaData, setGpaData] = useState([]);
-            const [gpaResult, setGpaResult] = useState(null);
+            const saveBtn = document.querySelector('button[onclick="saveDataToCloud()"]');
+            const loadBtn = document.querySelector('button[onclick="loadDataFromCloud()"]');
+            const captureBtn = document.querySelector('button[onclick="captureResult()"]');
             
-            const [yearlyData, setYearlyData] = useState({ t1: '', t2: '', t3: '' });
-            const [yearlyResult, setYearlyResult] = useState(null);
+            if (saveBtn) saveBtn.classList.add('guest-disabled');
+            if (loadBtn) loadBtn.classList.add('guest-disabled');
+            if (captureBtn) captureBtn.classList.add('guest-disabled');
             
-            const [targetData, setTargetData] = useState({ target: '', eval: '', test1: '', test2: '' });
-            const [targetResult, setTargetResult] = useState(null);
+            const guestNotice = document.getElementById('guestNotice');
+            if (guestNotice) guestNotice.style.display = 'block';
             
-            const [bacStream, setBacStream] = useState('');
-            const [bacTamazight, setBacTamazight] = useState(false);
-            const [bacData, setBacData] = useState([]);
-            const [bacResult, setBacResult] = useState(null);
+            showSuccessMessage('👋 مرحباً! أنت الآن في وضع الضيف (محدود)');
+        }
 
-            const [students, setStudents] = useState([]);
-            const [loading, setLoading] = useState(false);
-            const [error, setError] = useState('');
-            const [success, setSuccess] = useState('');
-
-            const db = {
-                "1": {
-                    "جذع مشترك علوم وتكنولوجيا": [
-                        ["رياضيات", 5], ["علوم طبيعية", 4], ["علوم فيزيائية", 4],
-                        ["لغة عربية", 3], ["لغة فرنسية", 2], ["لغة إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 2], ["علوم إسلامية", 2], ["تكنولوجيا", 2],
-                        ["معلوماتية", 2], ["تربية بدنية", 1]
-                    ],
-                    "جذع مشترك آداب": [
-                        ["لغة عربية", 5], ["فلسفة", 5], ["تاريخ وجغرافيا", 4],
-                        ["لغة فرنسية", 3], ["لغة إنجليزية", 2], ["رياضيات", 2],
-                        ["علوم إسلامية", 2], ["علوم طبيعية", 2], ["علوم فيزيائية", 2],
-                        ["تربية بدنية", 1]
-                    ]
-                },
-                "2": {
-                    "علوم تجريبية": [
-                        ["علوم طبيعية", 6], ["رياضيات", 5], ["علوم فيزيائية", 5],
-                        ["لغة عربية", 2], ["لغة فرنسية", 2], ["لغة إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 2], ["علوم إسلامية", 2], ["تربية بدنية", 1]
-                    ],
-                    "رياضيات": [
-                        ["رياضيات", 7], ["علوم فيزيائية", 6], ["علوم طبيعية", 2],
-                        ["لغة عربية", 2], ["لغة فرنسية", 2], ["لغة إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 2], ["علوم إسلامية", 2], ["فلسفة", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "تقني رياضي": [
-                        ["تكنولوجيا", 6], ["رياضيات", 6], ["علوم فيزيائية", 5],
-                        ["لغة عربية", 2], ["لغة فرنسية", 2], ["لغة إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 1], ["علوم إسلامية", 2], ["فلسفة", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "تسيير واقتصاد": [
-                        ["تسيير محاسبي ومالي", 5], ["اقتصاد ومناجمنت", 4], ["قانون", 2],
-                        ["رياضيات", 3], ["تاريخ وجغرافيا", 3], ["لغة عربية", 2],
-                        ["لغة فرنسية", 2], ["لغة إنجليزية", 2], ["علوم إسلامية", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "آداب وفلسفة": [
-                        ["لغة عربية", 5], ["فلسفة", 5], ["تاريخ وجغرافيا", 4],
-                        ["لغة فرنسية", 3], ["لغة إنجليزية", 2], ["رياضيات", 2],
-                        ["علوم إسلامية", 2], ["علوم طبيعية", 2], ["علوم فيزيائية", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "لغات أجنبية": [
-                        ["لغة عربية", 4], ["لغة فرنسية", 4], ["لغة إنجليزية", 4],
-                        ["لغة أجنبية ثالثة", 4], ["تاريخ وجغرافيا", 4], ["رياضيات", 2],
-                        ["علوم إسلامية", 2], ["فلسفة", 2], ["تربية بدنية", 1]
-                    ]
-                },
-                "3": {
-                    "علوم تجريبية": [
-                        ["رياضيات", 4], ["علوم طبيعية", 5], ["فيزياء", 5],
-                        ["عربية", 2], ["فرنسية", 2], ["إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 1], ["تربية إسلامية", 2], ["فلسفة", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "رياضيات": [
-                        ["رياضيات", 7], ["فيزياء", 6], ["علوم طبيعية", 2],
-                        ["عربية", 2], ["فرنسية", 2], ["إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 1], ["تربية إسلامية", 2], ["فلسفة", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "تقني رياضي": [
-                        ["رياضيات", 5], ["فيزياء", 5], ["تكنولوجيا", 7],
-                        ["عربية", 2], ["فرنسية", 2], ["إنجليزية", 2],
-                        ["تاريخ وجغرافيا", 1], ["تربية إسلامية", 2], ["فلسفة", 2],
-                        ["تربية بدنية", 1]
-                    ],
-                    "تسيير واقتصاد": [
-                        ["رياضيات", 3], ["اقتصاد وتسيير", 5], ["قانون", 3],
-                        ["محاسبة ومالية", 4], ["عربية", 2], ["فرنسية", 2],
-                        ["إنجليزية", 2], ["تاريخ وجغرافيا", 2], ["تربية إسلامية", 2],
-                        ["فلسفة", 2], ["تربية بدنية", 1]
-                    ],
-                    "آداب وفلسفة": [
-                        ["فلسفة", 7], ["عربية", 5], ["فرنسية", 3],
-                        ["إنجليزية", 2], ["تاريخ وجغرافيا", 3], ["تربية إسلامية", 2],
-                        ["رياضيات", 2], ["علوم طبيعية", 1], ["تربية بدنية", 1]
-                    ],
-                    "لغات أجنبية": [
-                        ["فرنسية", 5], ["إنجليزية", 4], ["عربية", 4],
-                        ["إسبانية/ألمانية", 4], ["تاريخ وجغرافيا", 2], ["تربية إسلامية", 2],
-                        ["فلسفة", 2], ["رياضيات", 2], ["تربية بدنية", 1]
-                    ]
-                }
-            };
-
-            useEffect(() => {
-                checkSession();
-                const update = () => {
-                    const diff = Math.max(0, new Date("June 8, 2026 08:00:00") - new Date());
-                    setTimer({
-                        days: Math.floor(diff / 86400000),
-                        hours: Math.floor((diff % 86400000) / 3600000),
-                        minutes: Math.floor((diff % 3600000) / 60000)
-                    });
-                };
-                update();
-                const interval = setInterval(update, 60000);
-                return () => clearInterval(interval);
-            }, []);
-
-            useEffect(() => {
-                if (view === 'gpa' && level && db[level]) {
-                    const streams = Object.keys(db[level]);
-                    if (!stream || !streams.includes(stream)) {
-                        setStream(streams[0]);
-                    }
-                }
-            }, [view, level]);
-
-            useEffect(() => {
-                if (view === 'gpa' && level && stream && db[level] && db[level][stream]) {
-                    initGPA();
-                }
-            }, [view, level, stream, tamazight, art]);
-
-            useEffect(() => {
-                if (view === 'bac' && db["3"]) {
-                    const streams = Object.keys(db["3"]);
-                    if (!bacStream || !streams.includes(bacStream)) {
-                        setBacStream(streams[0]);
-                    }
-                }
-            }, [view]);
-
-            useEffect(() => {
-                if (view === 'bac' && bacStream && db["3"] && db["3"][bacStream]) {
-                    initBAC();
-                }
-            }, [view, bacStream, bacTamazight]);
-
-            const checkSession = async () => {
-                try {
-                    const user = await account.get();
-                    setCurrentUser(user);
-                    setIsAdmin(user.email === ADMIN_EMAIL);
-                    setView('home');
-                } catch {
-                    setView('login');
-                }
-            };
-
-            const handleLogin = async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setError('');
-                const email = e.target.email.value;
-                const password = e.target.password.value;
-                try {
-                    await account.createEmailPasswordSession(email, password);
-                    const user = await account.get();
-                    setCurrentUser(user);
-                    setIsAdmin(user.email === ADMIN_EMAIL);
-                    setView('home');
-                    showSuccess('تم تسجيل الدخول بنجاح! 🎉');
-                } catch (err) {
-                    setError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            const handleRegister = async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setError('');
-                const name = e.target.name.value;
-                const email = e.target.email.value;
-                const password = e.target.password.value;
-                try {
-                    await account.create(ID.unique(), email, password, name);
-                    await account.createEmailPasswordSession(email, password);
-                    const user = await account.get();
-                    await databases.createDocument(DATABASE_ID, STUDENTS_COLLECTION_ID, ID.unique(), {
-                        userId: user.$id,
-                        fullName: name,
-                        email: email,
-                        password: password,
-                        avatar: name.charAt(0).toUpperCase()
-                    });
-                    setCurrentUser(user);
-                    setIsAdmin(user.email === ADMIN_EMAIL);
-                    setView('home');
-                    showSuccess('تم إنشاء الحساب بنجاح! 🎉');
-                } catch (err) {
-                    if (err.code === 409) setError('البريد الإلكتروني مُستخدم بالفعل');
-                    else setError('خطأ في إنشاء الحساب');
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            const handleLogout = async () => {
-                try {
-                    if (!isGuest) await account.deleteSession('current');
-                    setCurrentUser(null);
-                    setIsAdmin(false);
-                    setIsGuest(false);
-                    setView('login');
-                    showSuccess('تم تسجيل الخروج بنجاح!');
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-
-            const continueAsGuest = () => {
-                setIsGuest(true);
-                setCurrentUser({ name: 'ضيف', email: 'guest@local' });
-                setView('home');
-                showSuccess('مرحباً! أنت في وضع الضيف 👤');
-            };
-
-            const initGPA = () => {
-                let list = [...db[level][stream]];
-                if (tamazight) list.push(["أمازيغية", 2]);
-                if (art) list.push(["تربية فنية", 1]);
-                setGpaData(list.map(([name, coef]) => ({ 
-                    name, coef, eval: '', practical: '', test1: '', test2: '', exam: '' 
-                })));
-                setGpaResult(null);
-            };
-
-            const initBAC = () => {
-                let list = [...db["3"][bacStream]];
-                if (bacTamazight) list.push(["أمازيغية", 2]);
-                setBacData(list.map(([name, coef]) => ({ name, coef, mark: '' })));
-                setBacResult(null);
-            };
-
-            const calculateGPA = () => {
-                let totalPoints = 0, totalCoef = 0;
-                gpaData.forEach(s => {
-                    const e = parseFloat(s.eval) || 0;
-                    const p = parseFloat(s.practical) || 0;
-                    const t1 = parseFloat(s.test1) || 0;
-                    const t2 = parseFloat(s.test2) || 0;
-                    const ex = parseFloat(s.exam) || 0;
-                    
-                    let avg = 0;
-                    if (s.name === "أمازيغية" || s.name === "تربية فنية") {
-                        avg = t2 > 0 ? (e + p + t1 + t2 + (ex * 2)) / 6 : (e + p + t1 + (ex * 2)) / 5;
-                        const extra = avg > 10 ? (avg - 10) * s.coef : 0;
-                        totalPoints += extra;
-                    } else {
-                        avg = t2 > 0 ? (e + p + t1 + t2 + (ex * 2)) / 6 : (e + p + t1 + (ex * 2)) / 5;
-                        totalPoints += avg * s.coef;
-                        totalCoef += s.coef;
-                    }
+        async function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+            const errorEl = document.getElementById('registerError');
+            try {
+                registerBtn.disabled = true;
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+                errorEl.classList.remove('show');
+                await account.create(ID.unique(), email, password, name);
+                await account.createEmailPasswordSession(email, password);
+                currentUser = await account.get();
+                isAdmin = (currentUser.email === ADMIN_EMAIL);
+                isGuest = false;
+                await databases.createDocument(DATABASE_ID, STUDENTS_COLLECTION_ID, ID.unique(), {
+                    userId: currentUser.$id, fullName: name, email: email, password: password,
+                    avatar: name.charAt(0).toUpperCase()
                 });
-                
-                const result = (totalPoints / totalCoef).toFixed(2);
-                setGpaResult(result);
-                showSuccess('تم حساب المعدل! 📊');
-            };
+                hideLoginPanel();
+                await loadUserData();
+                showSuccessMessage('🎉 تم إنشاء الحساب بنجاح!');
+            } catch (error) {
+                let errorMessage = 'خطأ في إنشاء الحساب';
+                if (error.code === 409) errorMessage = 'البريد الإلكتروني مُستخدم بالفعل';
+                else if (error.type === 'user_invalid_credentials') errorMessage = 'كلمة المرور ضعيفة (8 أحرف على الأقل)';
+                errorEl.textContent = '⚠️ ' + errorMessage;
+                errorEl.classList.add('show');
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب';
+            }
+        }
 
-            const calculateYearly = () => {
-                const t1 = parseFloat(yearlyData.t1) || 0;
-                const t2 = parseFloat(yearlyData.t2) || 0;
-                const t3 = parseFloat(yearlyData.t3) || 0;
-                if (!t1 || !t2 || !t3) {
-                    setError('يرجى إدخال جميع المعدلات');
-                    return;
+        async function logout() {
+            try {
+                if (!isGuest) {
+                    await account.deleteSession('current');
                 }
-                const result = ((t1 + t2 + (t3 * 3)) / 5).toFixed(2);
-                setYearlyResult(result);
-                showSuccess('تم حساب المعدل السنوي! 📅');
-            };
+                currentUser = null; 
+                isAdmin = false; 
+                isGuest = false;
+                showLoginPanel();
+                document.getElementById('adminPanel').classList.remove('show');
+                document.getElementById('adminPanelBtn').style.display = 'none';
+                showSuccessMessage('تم تسجيل الخروج بنجاح!');
+            } catch (error) { console.error('Logout error:', error); }
+        }
 
-            const calculateTarget = () => {
-                const target = parseFloat(targetData.target);
-                const evalMark = parseFloat(targetData.eval) || 0;
-                const test1 = parseFloat(targetData.test1) || 0;
-                const test2 = parseFloat(targetData.test2) || 0;
-                
-                if (!target) {
-                    setError('يرجى إدخال المعدل المطلوب');
-                    return;
+        function showLoginPanel() {
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('userInfoWrapper').classList.remove('show');
+            document.getElementById('userInfo').classList.remove('show');
+        }
+
+        function hideLoginPanel() {
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('userInfoWrapper').classList.add('show');
+            document.getElementById('userInfo').classList.add('show');
+        }
+
+        async function loadUserData() {
+            try {
+                const response = await databases.listDocuments(DATABASE_ID, STUDENTS_COLLECTION_ID, [Query.equal('userId', currentUser.$id)]);
+                if (response.documents.length > 0) {
+                    const student = response.documents[0];
+                    document.getElementById('userName').textContent = student.fullName;
+                    document.getElementById('userAvatar').textContent = student.avatar || student.fullName.charAt(0).toUpperCase();
+                } else {
+                    document.getElementById('userName').textContent = currentUser.name || 'مستخدم';
+                    document.getElementById('userAvatar').textContent = (currentUser.name || 'U').charAt(0).toUpperCase();
                 }
                 
-                const divisor = test2 > 0 ? 5 : 4;
-                const needed = ((target * divisor) - evalMark - test1 - test2) / 2;
-                setTargetResult(needed.toFixed(2));
-                showSuccess('تم حساب العلامة المطلوبة! 🎯');
-            };
+                const saveBtn = document.querySelector('button[onclick="saveDataToCloud()"]');
+                const loadBtn = document.querySelector('button[onclick="loadDataFromCloud()"]');
+                const captureBtn = document.querySelector('button[onclick="captureResult()"]');
+                
+                if (saveBtn) saveBtn.classList.remove('guest-disabled');
+                if (loadBtn) loadBtn.classList.remove('guest-disabled');
+                if (captureBtn) captureBtn.classList.remove('guest-disabled');
+                
+                const guestNotice = document.getElementById('guestNotice');
+                if (guestNotice) guestNotice.style.display = 'none';
+                
+                if (isAdmin) document.getElementById('adminPanelBtn').style.display = 'inline-flex';
+                else document.getElementById('adminPanelBtn').style.display = 'none';
+            } catch (error) { console.error('Error loading user data:', error); }
+        }
 
-            const calculateBAC = () => {
-                let totalPoints = 0, totalCoef = 0;
-                bacData.forEach(s => {
-                    const mark = parseFloat(s.mark) || 0;
-                    if (s.name === "أمازيغية") {
-                        const extra = mark > 10 ? (mark - 10) * s.coef : 0;
-                        totalPoints += extra;
-                    } else {
-                        totalPoints += mark * s.coef;
-                        totalCoef += s.coef;
-                    }
+        function toggleAdminPanel() {
+            if (!isAdmin) { showSuccessMessage('⚠️ غير مصرح لك بالوصول!'); return; }
+            const panel = document.getElementById('adminPanel');
+            if (panel.classList.contains('show')) panel.classList.remove('show');
+            else { panel.classList.add('show'); loadAllStudents(); panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        }
+
+        async function loadAllStudents() {
+            if (!isAdmin) { showSuccessMessage('⚠️ غير مصرح لك بالوصول!'); return; }
+            try {
+                const response = await databases.listDocuments(DATABASE_ID, STUDENTS_COLLECTION_ID, [Query.limit(100)]);
+                const tbody = document.getElementById('studentsTableBody');
+                tbody.innerHTML = '';
+                if (response.documents.length === 0) { tbody.innerHTML = '<tr><td colspan="5">لا يوجد طلاب</td></tr>'; return; }
+                response.documents.forEach((student, index) => {
+                    tbody.innerHTML += `<tr><td><strong>${index + 1}</strong></td><td>${student.fullName}</td><td>${student.email}</td><td><code style="background: var(--gray-100); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem;">${student.password || 'N/A'}</code></td><td style="font-size: 0.75rem;">${new Date(student.$createdAt).toLocaleDateString('ar-DZ')}</td></tr>`;
                 });
-                
-                setBacResult({
-                    points: totalPoints.toFixed(2),
-                    coef: totalCoef,
-                    avg: (totalPoints / totalCoef).toFixed(2)
+                showSuccessMessage(`✓ تم تحميل ${response.documents.length} طالب`);
+            } catch (error) { showSuccessMessage('⚠️ فشل تحميل البيانات!'); }
+        }
+
+        function exportToCSV() {
+            if (!isAdmin) { showSuccessMessage('⚠️ غير مصرح لك بالوصول!'); return; }
+            const table = document.querySelector('.students-table table');
+            let csv = [];
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent);
+            csv.push(headers.join(','));
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const rowData = Array.from(row.querySelectorAll('td')).map(td => {
+                    let text = td.textContent.trim();
+                    if (text.includes(',') || text.includes('"')) text = '"' + text.replace(/"/g, '""') + '"';
+                    return text;
                 });
-                showSuccess('تم حساب معدل BAC! 🎓');
-            };
+                csv.push(rowData.join(','));
+            });
+            const csvContent = csv.join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'students_bem_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+            showSuccessMessage('✓ تم التصدير!');
+        }
 
-            const saveData = async () => {
-                if (isGuest) {
-                    setError('سجل الدخول لحفظ البيانات');
-                    return;
+        function loadStreams() {
+            loadGPATable();
+        }
+
+        function loadGPATable() {
+            const yr = document.getElementById('year-sel').value;
+            let h = "";
+            let subs = [...db[yr]];
+            if(document.getElementById('tam-chk').checked) subs.push(["أمازيغية", 2]);
+            if(document.getElementById('art-chk').checked) subs.push(["تربية فنية", 1]);
+            subs.forEach(s => {
+                h += `<tr data-c="${s[1]}"><td><strong>${s[0]}</strong></td><td><input type="number" min="0" max="20" step="0.25" placeholder="0"></td><td><input type="number" min="0" max="20" step="0.25" placeholder="0"></td><td><input type="number" min="0" max="20" step="0.25" placeholder="0"></td><td><strong>${s[1]}</strong></td></tr>`;
+            });
+            document.getElementById('gpa-body').innerHTML = h;
+        }
+
+        function calculateGPA() {
+            let totalPoints = 0, totalCoef = 0;
+            document.querySelectorAll("#gpa-body tr").forEach(r => {
+                const inputs = r.querySelectorAll('input');
+                const e = parseFloat(inputs[0].value) || 0;
+                const t = parseFloat(inputs[1].value) || 0;
+                const ex = parseFloat(inputs[2].value) || 0;
+                const c = parseFloat(r.dataset.c);
+                const name = r.cells[0].innerText;
+                let avg = (e + t + (ex * 3)) / 5;
+                if (name === "أمازيغية" || name === "تربية فنية") {
+                    let extra = avg > 10 ? (avg - 10) * c : 0;
+                    totalPoints += extra;
+                } else {
+                    totalPoints += avg * c;
+                    totalCoef += c;
                 }
-                try {
-                    const vals = gpaData.map(s => ({
-                        eval: s.eval, practical: s.practical, test1: s.test1, test2: s.test2, exam: s.exam
-                    }));
-                    const existing = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [
-                        Query.equal('userId', currentUser.$id),
-                        Query.equal('year', level),
-                        Query.equal('stream', stream)
-                    ]);
-                    const data = {
-                        userId: currentUser.$id,
-                        year: level,
-                        stream: stream,
-                        grades: JSON.stringify(vals),
-                        updatedAt: new Date().toISOString()
-                    };
-                    if (existing.documents.length > 0) {
-                        await databases.updateDocument(DATABASE_ID, GRADES_COLLECTION_ID, existing.documents[0].$id, data);
-                    } else {
-                        await databases.createDocument(DATABASE_ID, GRADES_COLLECTION_ID, ID.unique(), data);
-                    }
-                    showSuccess('تم الحفظ! 💾');
-                } catch {
-                    setError('فشل الحفظ');
+            });
+            const finalAvg = totalPoints / totalCoef;
+            const resEl = document.getElementById('final-res');
+            let msg = { cls: 'average', icon: '📊', msg: 'جيد' };
+            if (finalAvg >= 16) msg = { cls: 'excellent', icon: '🎉', msg: 'ممتاز جداً!' };
+            else if (finalAvg >= 14) msg = { cls: 'excellent', icon: '⭐', msg: 'ممتاز!' };
+            else if (finalAvg >= 12) msg = { cls: 'good', icon: '👍', msg: 'جيد جداً' };
+            else if (finalAvg >= 10) msg = { cls: 'good', icon: '✓', msg: 'جيد' };
+            else if (finalAvg >= 8) msg = { cls: 'average', icon: '📊', msg: 'متوسط' };
+            else msg = { cls: 'weak', icon: '⚠️', msg: 'ضعيف' };
+            resEl.className = 'result-box show ' + msg.cls;
+            resEl.querySelector('.result-icon').textContent = msg.icon;
+            resEl.querySelector('.result-text').textContent = `المعدل النهائي: ${finalAvg.toFixed(2)}`;
+            resEl.querySelector('.result-message').textContent = msg.msg;
+        }
+
+        function calcYearly() {
+            const t1 = parseFloat(document.getElementById('t1-avg').value) || 0;
+            const t2 = parseFloat(document.getElementById('t2-avg').value) || 0;
+            const t3 = parseFloat(document.getElementById('t3-avg').value) || 0;
+            if(!t1 || !t2 || !t3) { showSuccessMessage('⚠️ يرجى إدخال جميع المعدلات!'); return; }
+            const yearlyAvg = ((t1 + t2 + (t3 * 3)) / 5).toFixed(2);
+            const resEl = document.getElementById('yearly-result');
+            let msg = { cls: 'average', icon: '📊', msg: 'جيد' };
+            if (yearlyAvg >= 16) msg = { cls: 'excellent', icon: '🎉', msg: 'ممتاز جداً!' };
+            else if (yearlyAvg >= 14) msg = { cls: 'excellent', icon: '⭐', msg: 'ممتاز!' };
+            else if (yearlyAvg >= 12) msg = { cls: 'good', icon: '👍', msg: 'جيد جداً' };
+            else if (yearlyAvg >= 10) msg = { cls: 'good', icon: '✓', msg: 'جيد' };
+            else if (yearlyAvg >= 8) msg = { cls: 'average', icon: '📊', msg: 'متوسط' };
+            else msg = { cls: 'weak', icon: '⚠️', msg: 'ضعيف' };
+            resEl.className = 'result-box show ' + msg.cls;
+            resEl.querySelector('.result-icon').textContent = msg.icon;
+            resEl.querySelector('.result-text').textContent = `المعدل السنوي: ${yearlyAvg}`;
+            resEl.querySelector('.result-message').textContent = msg.msg;
+        }
+
+        function calcNeeded() {
+            const targetAvg = parseFloat(document.getElementById('target-avg').value);
+            const evalMark = parseFloat(document.getElementById('eval-mark').value) || 0;
+            const testMark = parseFloat(document.getElementById('test-mark').value) || 0;
+            if(!targetAvg) { showSuccessMessage('⚠️ يرجى إدخال المعدل المطلوب!'); return; }
+            let neededExam = ((targetAvg * 5) - evalMark - testMark) / 3;
+            const resEl = document.getElementById('needed-result');
+            if(neededExam > 20) {
+                resEl.className = 'result-box show weak';
+                resEl.querySelector('.result-icon').textContent = '⚠️';
+                resEl.querySelector('.result-text').textContent = `العلامة المطلوبة: ${neededExam.toFixed(2)}`;
+                resEl.querySelector('.result-message').textContent = 'من المستحيل!';
+            } else if(neededExam < 0) {
+                resEl.className = 'result-box show excellent';
+                resEl.querySelector('.result-icon').textContent = '🎉';
+                resEl.querySelector('.result-text').textContent = 'متفوق!';
+                resEl.querySelector('.result-message').textContent = 'حققت المعدل!';
+            } else {
+                const msgClass = neededExam <= 10 ? 'excellent' : neededExam <= 15 ? 'good' : 'average';
+                resEl.className = 'result-box show ' + msgClass;
+                resEl.querySelector('.result-icon').textContent = '🎯';
+                resEl.querySelector('.result-text').textContent = `العلامة المطلوبة: ${neededExam.toFixed(2)}`;
+                resEl.querySelector('.result-message').textContent = neededExam <= 10 ? 'سهل!' : neededExam <= 15 ? 'ممكن!' : 'يتطلب جهد!';
+            }
+        }
+
+        function loadBemTable() {
+            let h = "";
+            let subs = [...bemSubjects];
+            if(document.getElementById('tam-bem').checked) subs.push(["أمازيغية", 2]);
+            subs.forEach(s => {
+                h += `<tr data-c="${s[1]}"><td><strong>${s[0]}</strong></td><td><input type="number" min="0" max="20" step="0.25" placeholder="0"></td><td><strong>${s[1]}</strong></td><td class="b-sum"><strong>0.00</strong></td></tr>`;
+            });
+            document.getElementById('bem-body').innerHTML = h;
+        }
+
+        function calcBem() {
+            let tP = 0, tC = 0;
+            document.querySelectorAll("#bem-body tr").forEach(r => {
+                let v = parseFloat(r.querySelector('input').value)||0, c = parseFloat(r.dataset.c);
+                let name = r.cells[0].innerText;
+                if (name === "أمازيغية") {
+                    let extra = v > 10 ? (v - 10) : 0;
+                    r.querySelector('.b-sum').innerHTML = `<strong>+${extra.toFixed(2)}</strong>`;
+                    tP += extra;
+                } else {
+                    r.querySelector('.b-sum').innerHTML = `<strong>${(v * c).toFixed(2)}</strong>`;
+                    tP += v * c; tC += c;
                 }
-            };
+            });
+            document.getElementById('res-pts').textContent = tP.toFixed(2);
+            document.getElementById('res-coef').textContent = tC;
+            document.getElementById('res-avg').textContent = (tP/tC).toFixed(2);
+        }
 
-            const loadData = async () => {
-                if (isGuest) {
-                    setError('سجل الدخول لاسترجاع البيانات');
-                    return;
-                }
-                try {
-                    const response = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [
-                        Query.equal('userId', currentUser.$id),
-                        Query.equal('year', level),
-                        Query.equal('stream', stream)
-                    ]);
-                    if (response.documents.length > 0) {
-                        const vals = JSON.parse(response.documents[0].grades);
-                        setGpaData(gpaData.map((s, i) => ({ ...s, ...vals[i] })));
-                        showSuccess('تم الاسترجاع! 📥');
-                    } else {
-                        setError('لا توجد بيانات محفوظة');
-                    }
-                } catch {
-                    setError('فشل الاسترجاع');
-                }
-            };
-
-            const loadStudents = async () => {
-                try {
-                    const response = await databases.listDocuments(DATABASE_ID, STUDENTS_COLLECTION_ID, [Query.limit(100)]);
-                    setStudents(response.documents);
-                } catch {
-                    setError('فشل تحميل البيانات');
-                }
-            };
-
-            const showSuccess = (msg) => {
-                setSuccess(msg);
-                setTimeout(() => setSuccess(''), 3000);
-            };
-
-            // Login/Register View
-            if (view === 'login') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 p-4 md:p-6 relative overflow-hidden" dir="rtl">
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                            <div className="absolute top-20 left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow"></div>
-                            <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1.5s' }}></div>
-                        </div>
-
-                        <div className="max-w-md mx-auto pt-8 md:pt-16 relative z-10">
-                            <div className="text-center mb-8">
-                                <div className="text-6xl mb-4 animate-float">🎓</div>
-                                <h1 className="text-4xl md:text-5xl font-black gradient-text mb-2">
-                                    HMD - BAC 2026
-                                </h1>
-                                <p className="text-gray-300 text-lg">النظام المتكامل</p>
-                            </div>
-
-                            <div className="glass-effect rounded-3xl p-6 md:p-8 shadow-2xl">
-                                <div className="flex gap-2 mb-6 p-1 bg-white/5 rounded-2xl">
-                                    <button 
-                                        onClick={() => setAuthMode('login')}
-                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all ${
-                                            authMode === 'login' 
-                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg' 
-                                                : 'text-gray-300 hover:text-white'
-                                        }`}>
-                                        تسجيل الدخول
-                                    </button>
-                                    <button 
-                                        onClick={() => setAuthMode('register')}
-                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all ${
-                                            authMode === 'register' 
-                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg' 
-                                                : 'text-gray-300 hover:text-white'
-                                        }`}>
-                                        إنشاء حساب
-                                    </button>
-                                </div>
-
-                                {error && (
-                                    <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm text-center">
-                                        ⚠️ {error}
-                                    </div>
-                                )}
-
-                                {authMode === 'login' ? (
-                                    <form onSubmit={handleLogin} className="space-y-4">
-                                        <div>
-                                            <label className="block text-white font-semibold mb-2 text-sm">البريد الإلكتروني</label>
-                                            <input 
-                                                type="email" 
-                                                name="email"
-                                                required
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-indigo-400 transition-all"
-                                                placeholder="example@email.com"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-semibold mb-2 text-sm">كلمة المرور</label>
-                                            <input 
-                                                type="password" 
-                                                name="password"
-                                                required
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-indigo-400 transition-all"
-                                                placeholder="••••••••"
-                                            />
-                                        </div>
-                                        <button 
-                                            type="submit"
-                                            disabled={loading}
-                                            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50">
-                                            {loading ? '⏳ جاري الدخول...' : '🚀 تسجيل الدخول'}
-                                        </button>
-                                    </form>
-                                ) : (
-                                    <form onSubmit={handleRegister} className="space-y-4">
-                                        <div>
-                                            <label className="block text-white font-semibold mb-2 text-sm">الاسم الكامل</label>
-                                            <input 
-                                                type="text" 
-                                                name="name"
-                                                required
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-indigo-400 transition-all"
-                                                placeholder="أدخل اسمك الكامل"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-semibold mb-2 text-sm">البريد الإلكتروني</label>
-                                            <input 
-                                                type="email" 
-                                                name="email"
-                                                required
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-indigo-400 transition-all"
-                                                placeholder="example@email.com"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-white font-semibold mb-2 text-sm">كلمة المرور</label>
-                                            <input 
-                                                type="password" 
-                                                name="password"
-                                                required
-                                                minLength="8"
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-indigo-400 transition-all"
-                                                placeholder="••••••••"
-                                            />
-                                        </div>
-                                        <button 
-                                            type="submit"
-                                            disabled={loading}
-                                            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50">
-                                            {loading ? '⏳ جاري الإنشاء...' : '✨ إنشاء حساب'}
-                                        </button>
-                                    </form>
-                                )}
-
-                                <div className="mt-6 pt-6 border-t border-white/10">
-                                    <button 
-                                        onClick={continueAsGuest}
-                                        className="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all">
-                                        👤 المتابعة كضيف
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 animate-bounce">
-                                {success}
-                            </div>
-                        )}
-                    </div>
-                );
+        async function saveDataToCloud() {
+            if (isGuest) { 
+                showSuccessMessage('⚠️ وضع الضيف: سجل الدخول لحفظ البيانات!'); 
+                return; 
             }
-
-            // Home View
-            if (view === 'home') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 p-4 md:p-6 relative overflow-hidden" dir="rtl">
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                            <div className="absolute top-20 left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow"></div>
-                            <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }}></div>
-                        </div>
-
-                        <div className="max-w-4xl mx-auto pt-4 md:pt-8 relative z-10">
-                            {/* User Info */}
-                            <div className="flex items-center justify-between mb-6 glass-effect p-4 rounded-2xl">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                        {isGuest ? '👤' : (currentUser?.name?.charAt(0) || 'U')}
-                                    </div>
-                                    <div>
-                                        <div className="text-white font-bold">
-                                            {isGuest && <span className="bg-gray-600 text-xs px-2 py-1 rounded-lg ml-2">ضيف</span>}
-                                            {currentUser?.name || 'مستخدم'}
-                                        </div>
-                                        <div className="text-gray-400 text-sm">{currentUser?.email}</div>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    {isAdmin && (
-                                        <button 
-                                            onClick={() => { setShowAdminPanel(!showAdminPanel); if (!showAdminPanel) loadStudents(); }}
-                                            className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-semibold transition-all text-sm">
-                                            <LucideIcon name="shield" className="w-4 h-4 inline ml-1" />
-                                            {showAdminPanel ? 'إخفاء' : 'لوحة التحكم'}
-                                        </button>
-                                    )}
-                                    <button 
-                                        onClick={handleLogout}
-                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all text-sm">
-                                        <LucideIcon name="log-out" className="w-4 h-4 inline ml-1" />
-                                        خروج
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Admin Panel */}
-                            {showAdminPanel && isAdmin && (
-                                <div className="glass-effect rounded-3xl p-6 mb-6 shadow-2xl">
-                                    <h2 className="text-2xl font-black text-white mb-4">
-                                        <LucideIcon name="shield" className="w-6 h-6 inline ml-2" />
-                                        لوحة التحكم
-                                    </h2>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-white text-sm">
-                                            <thead className="bg-white/10">
-                                                <tr>
-                                                    <th className="p-3 text-right">#</th>
-                                                    <th className="p-3 text-right">الاسم</th>
-                                                    <th className="p-3 text-right">البريد</th>
-                                                    <th className="p-3 text-right">التاريخ</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {students.map((s, i) => (
-                                                    <tr key={s.$id} className="border-t border-white/10 hover:bg-white/5">
-                                                        <td className="p-3">{i + 1}</td>
-                                                        <td className="p-3">{s.fullName}</td>
-                                                        <td className="p-3">{s.email}</td>
-                                                        <td className="p-3">{new Date(s.$createdAt).toLocaleDateString('ar')}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Header */}
-                            <div className="text-center mb-8 md:mb-12">
-                                <h1 className="text-3xl md:text-5xl font-black gradient-text mb-2 md:mb-3">
-                                    Designed by HMD
-                                </h1>
-                                <p className="text-gray-300 text-base md:text-lg">نظام حساب المعدلات الاحترافي</p>
-                            </div>
-
-                            {/* Timer */}
-                            <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-2xl mb-6 md:mb-8 backdrop-blur-xl border border-white/10">
-                                <div className="flex items-center justify-center gap-2 md:gap-3 mb-4 md:mb-6">
-                                    <LucideIcon name="clock" className="w-6 h-6 md:w-8 md:h-8 text-white" />
-                                    <h2 className="text-white text-lg md:text-2xl font-bold">موعد بكالوريا BAC 2026</h2>
-                                </div>
-                                <div className="grid grid-cols-3 gap-3 md:gap-4">
-                                    {[{ l: 'يوم', v: timer.days }, { l: 'ساعة', v: timer.hours }, { l: 'دقيقة', v: timer.minutes }].map((t, i) => (
-                                        <div key={i} className="bg-white/20 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center border border-white/10">
-                                            <div className="text-3xl md:text-5xl font-bold text-white mb-1 md:mb-2">{t.v}</div>
-                                            <div className="text-white/90 text-sm md:text-base">{t.l}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Menu Cards */}
-                            <div className="space-y-3 md:space-y-4">
-                                {[
-                                    { icon: 'calculator', title: 'المعدل الفصلي', desc: 'احسب معدلك الفصلي بدقة', color: 'indigo', page: 'gpa' },
-                                    { icon: 'calendar', title: 'المعدل السنوي', desc: 'احسب المعدل السنوي من الفصول الثلاثة', color: 'purple', page: 'yearly' },
-                                    { icon: 'target', title: 'العلامة المطلوبة', desc: 'اعرف العلامة التي تحتاجها', color: 'pink', page: 'target' },
-                                    { icon: 'graduation-cap', title: 'معدل BAC', desc: 'احسب معدل شهادة البكالوريا', color: 'cyan', page: 'bac' }
-                                ].map((card, i) => (
-                                    <button key={i} onClick={() => setView(card.page)}
-                                        className="w-full glass-effect rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 group hover:bg-white/15">
-                                        <div className="flex items-center gap-4 md:gap-5 text-right">
-                                            <div className={`bg-gradient-to-br from-${card.color}-500 to-${card.color}-600 p-4 md:p-5 rounded-2xl group-hover:scale-110 transition-transform flex-shrink-0 shadow-lg`}>
-                                                <LucideIcon name={card.icon} className="w-7 h-7 md:w-9 md:h-9 text-white" />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg md:text-2xl font-bold text-white mb-1">{card.title}</h3>
-                                                <p className="text-gray-300 text-sm md:text-base">{card.desc}</p>
-                                            </div>
-                                            <LucideIcon name="arrow-right" className="w-6 h-6 md:w-7 md:h-7 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {success}
-                            </div>
-                        )}
-                    </div>
-                );
+            if (!currentUser) { 
+                showSuccessMessage('⚠️ يجب تسجيل الدخول!'); 
+                return; 
             }
+            try {
+                const vals = [];
+                document.querySelectorAll("#gpa-body input").forEach(i => vals.push(i.value));
+                const year = document.getElementById('year-sel').value;
+                const existing = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [Query.equal('userId', currentUser.$id), Query.equal('year', year)]);
+                const data = { userId: currentUser.$id, year: year, grades: JSON.stringify(vals), updatedAt: new Date().toISOString() };
+                if (existing.documents.length > 0) await databases.updateDocument(DATABASE_ID, GRADES_COLLECTION_ID, existing.documents[0].$id, data);
+                else await databases.createDocument(DATABASE_ID, GRADES_COLLECTION_ID, ID.unique(), data);
+                showSuccessMessage('✓ تم الحفظ!');
+            } catch (error) { showSuccessMessage('⚠️ فشل الحفظ!'); }
+        }
 
-            // GPA View
-            if (view === 'gpa') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 p-4 md:p-6" dir="rtl">
-                        <div className="max-w-6xl mx-auto pt-4 md:pt-8">
-                            <button onClick={() => setView('home')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 font-medium transition-colors">
-                                <LucideIcon name="arrow-right" className="w-5 h-5" /><span>عودة</span>
-                            </button>
-                            
-                            <div className="glass-effect rounded-3xl shadow-2xl p-4 md:p-8">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <LucideIcon name="calculator" className="w-7 h-7 md:w-8 md:h-8 text-indigo-400" />
-                                    <h2 className="text-2xl md:text-3xl font-bold text-white">حساب المعدل الفصلي</h2>
-                                </div>
-
-                                {isGuest && (
-                                    <div className="mb-6 p-4 bg-gray-600/30 border border-gray-500/50 rounded-xl text-gray-200 text-sm text-center">
-                                        ℹ️ أنت في وضع الضيف - سجل الدخول لحفظ واسترجاع البيانات
-                                    </div>
-                                )}
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-                                    <select 
-                                        value={level} 
-                                        onChange={(e) => setLevel(e.target.value)}
-                                        className="p-3 bg-slate-800 border-2 border-white/20 rounded-xl text-white outline-none focus:border-indigo-400">
-                                        <option value="1">السنة الأولى ثانوي</option>
-                                        <option value="2">السنة الثانية ثانوي</option>
-                                        <option value="3">السنة الثالثة ثانوي</option>
-                                    </select>
-                                    
-                                    <select 
-                                        value={stream} 
-                                        onChange={(e) => setStream(e.target.value)}
-                                        className="p-3 bg-slate-800 border-2 border-white/20 rounded-xl text-white outline-none focus:border-indigo-400">
-                                        {db[level] && Object.keys(db[level]).map(s => (
-                                            <option key={s} value={s}>{s}</option>
-                                        ))}
-                                    </select>
-
-                                    <div className="flex gap-3">
-                                        <label className="flex items-center justify-center gap-2 p-3 bg-indigo-500/20 rounded-xl cursor-pointer hover:bg-indigo-500/30 transition-colors border border-indigo-500/30 flex-1">
-                                            <input type="checkbox" checked={tamazight} onChange={(e) => setTamazight(e.target.checked)} className="w-5 h-5" />
-                                            <span className="font-medium text-white text-sm">أمازيغية</span>
-                                        </label>
-                                        <label className="flex items-center justify-center gap-2 p-3 bg-indigo-500/20 rounded-xl cursor-pointer hover:bg-indigo-500/30 transition-colors border border-indigo-500/30 flex-1">
-                                            <input type="checkbox" checked={art} onChange={(e) => setArt(e.target.checked)} className="w-5 h-5" />
-                                            <span className="font-medium text-white text-sm">تربية فنية</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="overflow-x-auto rounded-xl border-2 border-white/20 mb-6">
-                                    <table className="w-full min-w-[800px]">
-                                        <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-                                            <tr>
-                                                <th className="p-3 text-center font-semibold text-sm">المادة</th>
-                                                <th className="p-3 text-center font-semibold text-sm">تقويم</th>
-                                                <th className="p-3 text-center font-semibold text-sm">أعمال تطبيقية</th>
-                                                <th className="p-3 text-center font-semibold text-sm">فرض 1</th>
-                                                <th className="p-3 text-center font-semibold text-sm">فرض 2</th>
-                                                <th className="p-3 text-center font-semibold text-sm">اختبار</th>
-                                                <th className="p-3 text-center font-semibold text-sm">معامل</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white/5">
-                                            {gpaData.map((s, i) => (
-                                                <tr key={i} className="border-t border-white/10 hover:bg-white/10 transition-colors">
-                                                    <td className="p-3 text-center font-medium text-white">{s.name}</td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.eval} 
-                                                            onChange={(e) => {
-                                                                const newData = [...gpaData];
-                                                                newData[i].eval = e.target.value;
-                                                                setGpaData(newData);
-                                                            }}
-                                                            className="w-16 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-indigo-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.practical} 
-                                                            onChange={(e) => {
-                                                                const newData = [...gpaData];
-                                                                newData[i].practical = e.target.value;
-                                                                setGpaData(newData);
-                                                            }}
-                                                            className="w-16 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-indigo-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.test1} 
-                                                            onChange={(e) => {
-                                                                const newData = [...gpaData];
-                                                                newData[i].test1 = e.target.value;
-                                                                setGpaData(newData);
-                                                            }}
-                                                            className="w-16 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-indigo-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.test2} 
-                                                            onChange={(e) => {
-                                                                const newData = [...gpaData];
-                                                                newData[i].test2 = e.target.value;
-                                                                setGpaData(newData);
-                                                            }}
-                                                            className="w-16 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-indigo-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.exam} 
-                                                            onChange={(e) => {
-                                                                const newData = [...gpaData];
-                                                                newData[i].exam = e.target.value;
-                                                                setGpaData(newData);
-                                                            }}
-                                                            className="w-16 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-indigo-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center font-bold text-indigo-400">{s.coef}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                                    <button 
-                                        onClick={calculateGPA}
-                                        className="md:col-span-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                        <LucideIcon name="trending-up" className="w-5 h-5 inline ml-2" />
-                                        احسب المعدل
-                                    </button>
-                                    
-                                    {!isGuest && (
-                                        <>
-                                            <button 
-                                                onClick={saveData}
-                                                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
-                                                <LucideIcon name="save" className="w-5 h-5 inline ml-1" />
-                                                حفظ
-                                            </button>
-                                            <button 
-                                                onClick={loadData}
-                                                className="bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
-                                                <LucideIcon name="rotate-ccw" className="w-5 h-5 inline ml-1" />
-                                                استرجاع
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-
-                                {gpaResult && (
-                                    <div className="mt-6 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl p-6 md:p-8 text-center border-2 border-indigo-500/30 backdrop-blur-xl result-animation">
-                                        <p className="text-gray-300 text-lg mb-3">المعدل النهائي</p>
-                                        <p className="text-5xl md:text-6xl font-bold gradient-text">{gpaResult}</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {success}
-                            </div>
-                        )}
-                        {error && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                );
+        async function loadDataFromCloud() {
+            if (isGuest) { 
+                showSuccessMessage('⚠️ وضع الضيف: سجل الدخول لاسترجاع البيانات!'); 
+                return; 
             }
-
-            // Yearly View
-            if (view === 'yearly') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 p-4 md:p-6" dir="rtl">
-                        <div className="max-w-4xl mx-auto pt-4 md:pt-8">
-                            <button onClick={() => setView('home')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 font-medium transition-colors">
-                                <LucideIcon name="arrow-right" className="w-5 h-5" /><span>عودة</span>
-                            </button>
-                            
-                            <div className="glass-effect rounded-3xl shadow-2xl p-4 md:p-8">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <LucideIcon name="calendar" className="w-7 h-7 md:w-8 md:h-8 text-purple-400" />
-                                    <h2 className="text-2xl md:text-3xl font-bold text-white">حساب المعدل السنوي</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                    {[
-                                        { label: 'معدل الفصل الأول', key: 't1' },
-                                        { label: 'معدل الفصل الثاني', key: 't2' },
-                                        { label: 'معدل الفصل الثالث', key: 't3' }
-                                    ].map((field, i) => (
-                                        <div key={i}>
-                                            <label className="block text-white font-semibold mb-2 text-sm">{field.label}</label>
-                                            <input 
-                                                type="number" 
-                                                value={yearlyData[field.key]}
-                                                onChange={(e) => setYearlyData({ ...yearlyData, [field.key]: e.target.value })}
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-purple-400 transition-all"
-                                                placeholder="0.00"
-                                                step="0.01"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <button 
-                                    onClick={calculateYearly}
-                                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                    <LucideIcon name="trending-up" className="w-5 h-5 inline ml-2" />
-                                    احسب المعدل السنوي
-                                </button>
-
-                                {yearlyResult && (
-                                    <div className="mt-6 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl p-6 md:p-8 text-center border-2 border-purple-500/30 backdrop-blur-xl result-animation">
-                                        <p className="text-gray-300 text-lg mb-3">المعدل السنوي</p>
-                                        <p className="text-5xl md:text-6xl font-bold gradient-text">{yearlyResult}</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {success}
-                            </div>
-                        )}
-                        {error && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                );
+            if (!currentUser) { 
+                showSuccessMessage('⚠️ يجب تسجيل الدخول!'); 
+                return; 
             }
+            try {
+                const year = document.getElementById('year-sel').value;
+                const response = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [Query.equal('userId', currentUser.$id), Query.equal('year', year)]);
+                if (response.documents.length > 0) {
+                    const vals = JSON.parse(response.documents[0].grades);
+                    document.querySelectorAll("#gpa-body input").forEach((i, idx) => { if(vals[idx] !== undefined) i.value = vals[idx]; });
+                    showSuccessMessage('✓ تم الاسترجاع!');
+                } else showSuccessMessage('⚠️ لا توجد بيانات!');
+            } catch (error) { showSuccessMessage('⚠️ فشل الاسترجاع!'); }
+        }
 
-            // Target View
-            if (view === 'target') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-pink-900 to-red-900 p-4 md:p-6" dir="rtl">
-                        <div className="max-w-4xl mx-auto pt-4 md:pt-8">
-                            <button onClick={() => setView('home')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 font-medium transition-colors">
-                                <LucideIcon name="arrow-right" className="w-5 h-5" /><span>عودة</span>
-                            </button>
-                            
-                            <div className="glass-effect rounded-3xl shadow-2xl p-4 md:p-8">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <LucideIcon name="target" className="w-7 h-7 md:w-8 md:h-8 text-pink-400" />
-                                    <h2 className="text-2xl md:text-3xl font-bold text-white">حساب العلامة المطلوبة</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    {[
-                                        { label: 'المعدل المطلوب', key: 'target' },
-                                        { label: 'علامة التقويم', key: 'eval' },
-                                        { label: 'علامة الفرض 1', key: 'test1' },
-                                        { label: 'علامة الفرض 2', key: 'test2' }
-                                    ].map((field, i) => (
-                                        <div key={i}>
-                                            <label className="block text-white font-semibold mb-2 text-sm">{field.label}</label>
-                                            <input 
-                                                type="number" 
-                                                value={targetData[field.key]}
-                                                onChange={(e) => setTargetData({ ...targetData, [field.key]: e.target.value })}
-                                                className="w-full p-3 bg-white/10 border-2 border-white/20 rounded-xl text-white placeholder-gray-400 outline-none focus:border-pink-400 transition-all"
-                                                placeholder="0.00"
-                                                step="0.01"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <button 
-                                    onClick={calculateTarget}
-                                    className="w-full bg-gradient-to-r from-pink-600 to-red-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                    <LucideIcon name="trending-up" className="w-5 h-5 inline ml-2" />
-                                    احسب العلامة المطلوبة
-                                </button>
-
-                                {targetResult && (
-                                    <div className="mt-6 bg-gradient-to-r from-pink-500/20 to-red-500/20 rounded-2xl p-6 md:p-8 text-center border-2 border-pink-500/30 backdrop-blur-xl result-animation">
-                                        <p className="text-gray-300 text-lg mb-3">العلامة المطلوبة في الاختبار</p>
-                                        <p className="text-5xl md:text-6xl font-bold gradient-text">{targetResult}</p>
-                                        {parseFloat(targetResult) > 20 && (
-                                            <p className="text-red-300 mt-4 font-semibold">⚠️ من المستحيل تحقيق هذا المعدل</p>
-                                        )}
-                                        {parseFloat(targetResult) < 0 && (
-                                            <p className="text-green-300 mt-4 font-semibold">🎉 أنت متفوق! حققت المعدل المطلوب</p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {success}
-                            </div>
-                        )}
-                        {error && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                );
+        function captureResult() {
+            if (isGuest) { 
+                showSuccessMessage('⚠️ وضع الضيف: سجل الدخول لحفظ الصور!'); 
+                return; 
             }
-
-            // BAC View
-            if (view === 'bac') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-blue-900 p-4 md:p-6" dir="rtl">
-                        <div className="max-w-5xl mx-auto pt-4 md:pt-8">
-                            <button onClick={() => setView('home')} className="flex items-center gap-2 text-gray-300 hover:text-white mb-6 font-medium transition-colors">
-                                <LucideIcon name="arrow-right" className="w-5 h-5" /><span>عودة</span>
-                            </button>
-                            
-                            <div className="glass-effect rounded-3xl shadow-2xl p-4 md:p-8">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <LucideIcon name="graduation-cap" className="w-7 h-7 md:w-8 md:h-8 text-cyan-400" />
-                                    <h2 className="text-xl md:text-3xl font-bold text-white">حساب معدل شهادة البكالوريا</h2>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                                    <select 
-                                        value={bacStream} 
-                                        onChange={(e) => setBacStream(e.target.value)}
-                                        className="p-3 bg-slate-800 border-2 border-white/20 rounded-xl text-white outline-none focus:border-cyan-400">
-                                        {db["3"] && Object.keys(db["3"]).map(s => (
-                                            <option key={s} value={s}>{s}</option>
-                                        ))}
-                                    </select>
-
-                                    <label className="flex items-center justify-center gap-2 p-3 bg-cyan-500/20 rounded-xl cursor-pointer hover:bg-cyan-500/30 transition-colors border border-cyan-500/30">
-                                        <input type="checkbox" checked={bacTamazight} onChange={(e) => setBacTamazight(e.target.checked)} className="w-5 h-5" />
-                                        <span className="font-medium text-white">أمازيغية</span>
-                                    </label>
-                                </div>
-
-                                <div className="overflow-x-auto rounded-xl border-2 border-white/20 mb-6">
-                                    <table className="w-full">
-                                        <thead className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white">
-                                            <tr>
-                                                <th className="p-3 text-center font-semibold">المادة</th>
-                                                <th className="p-3 text-center font-semibold">العلامة</th>
-                                                <th className="p-3 text-center font-semibold">المعامل</th>
-                                                <th className="p-3 text-center font-semibold">المجموع</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white/5">
-                                            {bacData.map((s, i) => (
-                                                <tr key={i} className="border-t border-white/10 hover:bg-white/10 transition-colors">
-                                                    <td className="p-3 text-center font-medium text-white">{s.name}</td>
-                                                    <td className="p-3 text-center">
-                                                        <input 
-                                                            type="number" 
-                                                            value={s.mark} 
-                                                            onChange={(e) => {
-                                                                const newData = [...bacData];
-                                                                newData[i].mark = e.target.value;
-                                                                setBacData(newData);
-                                                            }}
-                                                            className="w-20 md:w-24 p-2 bg-white/10 border-2 border-white/20 rounded-lg text-center text-white outline-none focus:border-cyan-400" 
-                                                            placeholder="0" 
-                                                        />
-                                                    </td>
-                                                    <td className="p-3 text-center font-bold text-cyan-400">{s.coef}</td>
-                                                    <td className="p-3 text-center font-bold text-white">
-                                                        {s.name === "أمازيغية" 
-                                                            ? `+${(Math.max(0, (parseFloat(s.mark) || 0) - 10) * s.coef).toFixed(2)}`
-                                                            : ((parseFloat(s.mark) || 0) * s.coef).toFixed(2)
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <button 
-                                    onClick={calculateBAC}
-                                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 mb-6">
-                                    <LucideIcon name="trending-up" className="w-5 h-5 inline ml-2" />
-                                    احسب النتيجة النهائية
-                                </button>
-
-                                {bacResult && (
-                                    <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl p-6 md:p-8 border-2 border-cyan-500/30 backdrop-blur-xl result-animation">
-                                        <div className="grid grid-cols-3 gap-4 text-center">
-                                            <div>
-                                                <p className="text-gray-300 text-sm mb-2">المجموع</p>
-                                                <p className="text-3xl font-bold text-cyan-400">{bacResult.points}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-gray-300 text-sm mb-2">المعاملات</p>
-                                                <p className="text-3xl font-bold text-cyan-400">{bacResult.coef}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-gray-300 text-sm mb-2">المعدل</p>
-                                                <p className="text-3xl font-bold gradient-text">{bacResult.avg}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {success && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {success}
-                            </div>
-                        )}
-                        {error && (
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-50">
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                );
+            const resultEl = document.getElementById('final-res');
+            if(!resultEl.classList.contains('show')) { 
+                showSuccessMessage('⚠️ قم بحساب المعدل أولاً!'); 
+                return; 
             }
+            html2canvas(resultEl, { backgroundColor: null, scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'معدلي-BEM-HMD.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                showSuccessMessage('✓ تم الحفظ! 📸');
+            });
+        }
 
-            return null;
-        };
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === index));
+            document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === index));
+            if (index !== 4) document.getElementById('adminPanel').classList.remove('show');
+        }
 
-        ReactDOM.createRoot(document.getElementById('root')).render(<GradeCalculator />);
+        function showSuccessMessage(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            if(document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon'); icon.classList.add('fa-sun');
+                localStorage.setItem('hmd_bem_theme', 'dark');
+            } else {
+                icon.classList.remove('fa-sun'); icon.classList.add('fa-moon');
+                localStorage.setItem('hmd_bem_theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            loadStreams(); 
+            loadBemTable();
+            
+            const savedTheme = localStorage.getItem('hmd_bem_theme');
+            if(savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').classList.remove('fa-moon');
+                document.getElementById('themeIcon').classList.add('fa-sun');
+            }
+            
+            try {
+                currentUser = await account.get();
+                isAdmin = (currentUser.email === ADMIN_EMAIL);
+                isGuest = false;
+                hideLoginPanel();
+                await loadUserData();
+            } catch (error) { 
+                showLoginPanel(); 
+            }
+        });
     </script>
 </body>
 </html>
